@@ -4,7 +4,7 @@
 
 package com.jbv.web.spring6restmvs.services;
 
-import com.jbv.web.spring6restmvs.models.Customer;
+import com.jbv.web.spring6restmvs.dtos.CustomerDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +12,16 @@ import java.util.UUID;
 
 public interface CustomerService {
 
-    Optional<Customer> getCustomerById(UUID customerId);
+    Optional<CustomerDTO> getCustomerById(UUID customerId);
 
-    List<Customer> getCustomers();
+    List<CustomerDTO> getCustomers();
 
-    Customer createCustomer(Customer customer);
+    CustomerDTO createCustomer(CustomerDTO customerDTO);
 
-    void updateCustomerById(UUID customerId, Customer customer);
+    Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO);
 
-    void deleteCustomerById(UUID customerId);
+    Boolean deleteCustomerById(UUID customerId);
 
-    void patchCustomerById(UUID customerId, Customer customer);
+    void patchCustomerById(UUID customerId, CustomerDTO customerDTO);
 
 }
