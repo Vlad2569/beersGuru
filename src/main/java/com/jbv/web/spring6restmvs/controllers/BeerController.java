@@ -4,6 +4,7 @@
 
 package com.jbv.web.spring6restmvs.controllers;
 
+import com.jbv.web.spring6restmvs.exceptions.NotFoundException;
 import com.jbv.web.spring6restmvs.models.Beer;
 import com.jbv.web.spring6restmvs.services.BeerService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class BeerController {
 
         log.debug("Get Beer by Id in controller was called.");
 
-        return beerService.getById(uuid);
+        return beerService.getById(uuid).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(BEER_PATH)

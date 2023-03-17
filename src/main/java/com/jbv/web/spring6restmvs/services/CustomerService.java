@@ -7,11 +7,12 @@ package com.jbv.web.spring6restmvs.services;
 import com.jbv.web.spring6restmvs.models.Customer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
 
-    Customer getCustomerById(UUID customerId);
+    Optional<Customer> getCustomerById(UUID customerId);
 
     List<Customer> getCustomers();
 

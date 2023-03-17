@@ -5,6 +5,7 @@
 package com.jbv.web.spring6restmvs.controllers;
 
 
+import com.jbv.web.spring6restmvs.exceptions.NotFoundException;
 import com.jbv.web.spring6restmvs.models.Customer;
 import com.jbv.web.spring6restmvs.services.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class CustomerController {
 
         log.debug("Get customer by id in controller was called.");
 
-        return customerService.getCustomerById(customerId);
+        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(CUSTOMER_PATH)
