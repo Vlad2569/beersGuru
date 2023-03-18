@@ -5,6 +5,8 @@
 package com.jbv.web.spring6restmvs.dtos;
 
 import com.jbv.web.spring6restmvs.enums.BeerStyle;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,6 +19,9 @@ import java.util.UUID;
 public class BeerDTO {
     private UUID beerId;
     private Integer version;
+
+    @NotNull
+    @NotEmpty
     private String beerName;
     private BeerStyle beerStyle;
     private String upc;
