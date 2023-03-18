@@ -17,6 +17,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class BeerServiceImpl implements BeerService {
+
     private final Map<UUID, BeerDTO> beerMap;
 
     public BeerServiceImpl() {
