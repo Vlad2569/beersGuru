@@ -65,6 +65,7 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public List<BeerDTO> listBeers(){
+
         return new ArrayList<>(beerMap.values());
     }
 
@@ -119,7 +120,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void patchById(UUID beerId, BeerDTO beerDTO) {
+    public Optional<BeerDTO> patchById(UUID beerId, BeerDTO beerDTO) {
 
         BeerDTO beerDTOToPatch = beerMap.get(beerId);
 
@@ -148,6 +149,7 @@ public class BeerServiceImpl implements BeerService {
         }
 
         beerDTOToPatch.setLastUpdate(LocalDateTime.now());
+        return Optional.of(beerDTOToPatch);
     }
 
 

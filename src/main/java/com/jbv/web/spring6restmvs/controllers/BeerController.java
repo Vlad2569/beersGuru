@@ -63,7 +63,7 @@ public class BeerController {
 
         if (beerService.updateById(beerId, beerDTO).isEmpty()) {
             throw new NotFoundException();
-        }
+        };
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -75,7 +75,7 @@ public class BeerController {
 
         if (! beerService.deleteById(beerId)) {
             throw new NotFoundException();
-        }
+        };
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -85,7 +85,9 @@ public class BeerController {
 
         log.debug("Patch by id in controller was called.");
 
-        beerService.patchById(beerId, beerDTO);
+        if (beerService.patchById(beerId, beerDTO).isEmpty()) {
+            throw new NotFoundException();
+        };
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
