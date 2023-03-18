@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,13 +71,15 @@ public class CustomerControllerTest {
 
         CustomerDTO testCustomerDTO = customerServiceImpl.getCustomers().get(0);
 
-        given(customerService.getCustomerById(testCustomerDTO.getCustomerId())).willReturn(Optional.of(testCustomerDTO));
+        given(customerService.getCustomerById(testCustomerDTO.getCustomerId()))
+                .willReturn(Optional.of(testCustomerDTO));
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, testCustomerDTO.getCustomerId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.customerId", is(testCustomerDTO.getCustomerId().toString())))
+                .andExpect(jsonPath("$.customerId", is(testCustomerDTO
+                        .getCustomerId().toString())))
                 .andExpect(jsonPath("$.name", is(testCustomerDTO.getName())));
     }
 
@@ -98,7 +101,8 @@ public class CustomerControllerTest {
         testCustomerDTO.setCustomerId(null);
         testCustomerDTO.setVersion(null);
 
-        given(customerService.createCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.getCustomers().get(1));
+        given(customerService.createCustomer(any(CustomerDTO.class)))
+                .willReturn(customerServiceImpl.getCustomers().get(1));
 
         mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
@@ -109,10 +113,31 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testCreateCustomerNullCustomerName() throws Exception {
+
+        CustomerDTO testCustomerDTO = CustomerDTO.builder().build();
+
+        given(customerService.createCustomer(any(CustomerDTO.class)))
+                .willReturn(customerServiceImpl.getCustomers().get(1));
+
+        MvcResult mvcResult = mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testCustomerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
     void testUpdateCustomerById() throws Exception {
+
         CustomerDTO testCustomerDTO = customerServiceImpl.getCustomers().get(0);
 
-        given(customerService.updateCustomerById(any(), any())).willReturn(Optional.of(testCustomerDTO));
+        given(customerService.updateCustomerById(any(), any()))
+                .willReturn(Optional.of(testCustomerDTO));
 
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, testCustomerDTO.getCustomerId())
                         .accept(MediaType.APPLICATION_JSON)

@@ -7,6 +7,7 @@ package com.jbv.web.spring6restmvs.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jbv.web.spring6restmvs.dtos.BeerDTO;
+import com.jbv.web.spring6restmvs.models.Beer;
 import com.jbv.web.spring6restmvs.services.BeerService;
 import com.jbv.web.spring6restmvs.services.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,13 +116,16 @@ class BeerControllerTest {
 
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(1));
+        given(beerService.saveNewBeer(any(BeerDTO.class)))
+                .willReturn(beerServiceImpl.listBeers().get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
-                .andExpect(status().isBadRequest()).andReturn();
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
