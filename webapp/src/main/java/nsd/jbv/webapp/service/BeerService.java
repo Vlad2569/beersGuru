@@ -12,4 +12,8 @@ public interface BeerService {
     public Beer getBeerById(UUID id);
 
     public Beer saveBeer(Beer beer);
+
+    public Beer updateBeerById(UUID beerId, Beer beer);
+
+    public Beer deleteBeerById(UUID beerId);
 }

@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import nsd.jbv.webapp.model.Customer;
 
+@Service
 public class CustomerServiceImpl implements CustomerService{
 
     private Map<UUID, Customer> customerMap;
@@ -73,6 +76,24 @@ public class CustomerServiceImpl implements CustomerService{
         customerMap.put(savedCustomer.getId(), savedCustomer);
 
         return savedCustomer;
+    }
+
+    @Override
+    public Customer updateCustomerById(UUID customerId, Customer customer) {
+        
+        Customer existingCustomer = customerMap.getOrDefault(customerId, customer);
+
+        existingCustomer.setName(customer.getName());
+
+        return existingCustomer;
+    }
+
+    @Override
+    public Customer deleteCustomerById(UUID customerId) {
+        
+        Customer existingCustomer = customerMap.get(customerId);
+        customerMap.remove(customerId);
+        return existingCustomer;
     }
     
 }
