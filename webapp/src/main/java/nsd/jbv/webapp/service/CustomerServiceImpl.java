@@ -1,99 +1,103 @@
 package nsd.jbv.webapp.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import nsd.jbv.webapp.exception.NotFoundException;
+import nsd.jbv.webapp.model.CustomerDTO;
 import org.springframework.stereotype.Service;
 
-import nsd.jbv.webapp.model.Customer;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
-    private Map<UUID, Customer> customerMap;
+    private final Map<UUID, CustomerDTO> customerMap;
 
 
     public CustomerServiceImpl() {
-        
+
         this.customerMap = new HashMap<>();
 
-        Customer customerOne = Customer.builder()
-        .id(UUID.randomUUID())
-        .version(1)
-        .name("Samuel Smith")
-        .createdDate(LocalDateTime.now())
-        .updateDate(LocalDateTime.now())
-        .build();
+        CustomerDTO customerDTOOne = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .name("Samuel Smith")
+                .createdDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .build();
 
-        Customer customerTwo = Customer.builder()
-       .id(UUID.randomUUID())
-       .version(1)
-       .name("John Smith")
-       .createdDate(LocalDateTime.now())
-       .updateDate(LocalDateTime.now())
-       .build();
+        CustomerDTO customerDTOTwo = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .name("John Smith")
+                .createdDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .build();
 
-       Customer customerThree = Customer.builder()
-       .id(UUID.randomUUID())
-       .version(1)
-       .name("Dave Smith")
-       .createdDate(LocalDateTime.now())
-       .updateDate(LocalDateTime.now())
-       .build();
+        CustomerDTO customerDTOThree = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .name("Dave Smith")
+                .createdDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .build();
 
-       customerMap.put(customerOne.getId(), customerOne);
-       customerMap.put(customerTwo.getId(), customerTwo);
-       customerMap.put(customerThree.getId(), customerThree);
+        customerMap.put(customerDTOOne.getId(), customerDTOOne);
+        customerMap.put(customerDTOTwo.getId(), customerDTOTwo);
+        customerMap.put(customerDTOThree.getId(), customerDTOThree);
     }
 
     @Override
-    public List<Customer> listCustomers() {
-        
+    public List<CustomerDTO> listCustomers() {
+
         return new ArrayList<>(customerMap.values());
     }
 
     @Override
-    public Customer getCustomerById(UUID id) {
-        
-        return customerMap.getOrDefault(id, null);
+    public Optional<CustomerDTO> getCustomerById(UUID id) {
+
+        return Optional.of(customerMap.get(id));
     }
 
     @Override
-    public Customer saveCustomer(Customer customer) {
-    
-        Customer savedCustomer = Customer.builder()
-        .id(UUID.randomUUID())
-        .version(1)
-        .name(customer.getName())
-        .createdDate(LocalDateTime.now())
-        .updateDate(LocalDateTime.now())
-        .build();
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 
-        customerMap.put(savedCustomer.getId(), savedCustomer);
+        CustomerDTO savedCustomerDTO = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .name(customerDTO.getName())
+                .createdDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .build();
 
-        return savedCustomer;
+        customerMap.put(savedCustomerDTO.getId(), savedCustomerDTO);
+
+        return savedCustomerDTO;
     }
 
     @Override
-    public Customer updateCustomerById(UUID customerId, Customer customer) {
-        
-        Customer existingCustomer = customerMap.getOrDefault(customerId, customer);
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
 
-        existingCustomer.setName(customer.getName());
+        CustomerDTO existingCustomerDTO = customerMap.getOrDefault(customerId, null);
 
-        return existingCustomer;
+        if (existingCustomerDTO == null) {
+            throw new NotFoundException("Customer does not exist.");
+        }
+
+        existingCustomerDTO.setName(customerDTO.getName());
+
+        return Optional.of(existingCustomerDTO);
     }
 
     @Override
-    public Customer deleteCustomerById(UUID customerId) {
-        
-        Customer existingCustomer = customerMap.get(customerId);
+    public Boolean deleteCustomerById(UUID customerId) {
+
+        CustomerDTO existingCustomerDTO = customerMap.getOrDefault(customerId, null);
+
+        if (existingCustomerDTO == null) {
+            throw new NotFoundException("Customer does not exist.");
+        }
+
         customerMap.remove(customerId);
-        return existingCustomer;
+        return true;
     }
-    
 }

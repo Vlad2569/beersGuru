@@ -1,19 +1,20 @@
 package nsd.jbv.webapp.service;
 
+import nsd.jbv.webapp.model.CustomerDTO;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import nsd.jbv.webapp.model.Customer;
-
 public interface CustomerService {
-    
-    public List<Customer> listCustomers();
 
-    public Customer getCustomerById(UUID id);
+    List<CustomerDTO> listCustomers();
 
-    public Customer saveCustomer(Customer customer);
+    Optional<CustomerDTO> getCustomerById(UUID id);
 
-    public Customer updateCustomerById(UUID customerId, Customer customer);
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
 
-    public Customer deleteCustomerById(UUID customerId);
+    Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO);
+
+    Boolean deleteCustomerById(UUID customerId);
 }

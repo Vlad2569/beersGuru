@@ -1,22 +1,17 @@
 package nsd.jbv.webapp.controller;
 
-import java.util.List;
-import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
+import nsd.jbv.webapp.exception.NotFoundException;
+import nsd.jbv.webapp.model.CustomerDTO;
+import nsd.jbv.webapp.service.CustomerService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.RequiredArgsConstructor;
-import nsd.jbv.webapp.model.Customer;
-import nsd.jbv.webapp.service.CustomerService;
+import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,43 +23,47 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @DeleteMapping(CUSTOMER_ID_PATH)
-    public ResponseEntity<Customer> handleDelete(@PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<String> handleDelete(@PathVariable("customerId") UUID customerId) {
 
-        Customer savedCustomer = customerService.deleteCustomerById(customerId);
+        if (Boolean.FALSE.equals(customerService.deleteCustomerById(customerId))) {
+            throw new NotFoundException();
+        }
 
-        return new ResponseEntity<Customer>(savedCustomer, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(CUSTOMER_ID_PATH)
-    public ResponseEntity<Customer> handlePut(@PathVariable("customerId") UUID customerId,
-            @RequestBody Customer customer) {
+    public ResponseEntity<String> handlePut(@PathVariable("customerId") UUID customerId,
+                                            @RequestBody CustomerDTO customerDTO) {
 
-        Customer savedCustomer = customerService.updateCustomerById(customerId, customer);
+        if (customerService.updateCustomerById(customerId, customerDTO).isEmpty()) {
+            throw new NotFoundException();
+        }
 
-        return new ResponseEntity<Customer>(savedCustomer, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(CUSTOMER_PATH)
-    public ResponseEntity<Customer> handlePost(@RequestBody Customer customer) {
+    public ResponseEntity<CustomerDTO> handlePost(@Validated @RequestBody CustomerDTO customerDTO) {
 
-        Customer savedCustomer = customerService.saveCustomer(customer);
+        CustomerDTO savedCustomerDTO = customerService.saveCustomer(customerDTO);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/customer/" + savedCustomer.getId().toString());
+        headers.add("Location", "/api/v1/customer/" + savedCustomerDTO.getId().toString());
 
-        return new ResponseEntity<Customer>(savedCustomer, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedCustomerDTO, headers, HttpStatus.CREATED);
 
     }
 
     @GetMapping(CUSTOMER_PATH)
-    public List<Customer> listCustomers() {
+    public List<CustomerDTO> listCustomers() {
 
         return customerService.listCustomers();
     }
 
     @GetMapping(CUSTOMER_ID_PATH)
-    public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
+    public CustomerDTO getCustomerById(@PathVariable("customerId") UUID customerId) {
 
-        return customerService.getCustomerById(customerId);
+        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
     }
 }

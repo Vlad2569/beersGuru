@@ -1,19 +1,20 @@
 package nsd.jbv.webapp.service;
 
-import java.util.List;
-import java.util.UUID;
+import nsd.jbv.webapp.model.BeerDTO;
 
-import nsd.jbv.webapp.model.Beer;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface BeerService {
 
-    public List<Beer> listBeers();
-    
-    public Beer getBeerById(UUID id);
+    List<BeerDTO> listBeers();
 
-    public Beer saveBeer(Beer beer);
+    Optional<BeerDTO> getBeerById(UUID id);
 
-    public Beer updateBeerById(UUID beerId, Beer beer);
+    BeerDTO saveBeer(BeerDTO beerDTO);
 
-    public Beer deleteBeerById(UUID beerId);
+    Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beerDTO);
+
+    Boolean deleteBeerById(UUID beerId);
 }
